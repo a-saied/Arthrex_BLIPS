@@ -1,0 +1,108 @@
+<head>
+  <title>BLIPS</title>
+  <script src="./../two.js"></script>
+  <script src="./../main.js"></script> 
+</head>
+
+<body>
+  <div class = "lg-container">
+    <div class="row">
+      <div class = "col-xs-4">
+      </div>
+      <div class = "text-center col-xs-4">
+        <h1>
+          BLIPS
+        </h1> 
+      </div>
+      <div class = "col-xs-4">
+      </div>
+    </div>
+    {{> display}}
+  </div>
+  
+</body>
+
+<!-- <template name="hello">
+  <button>Click Me</button>
+  <p>You've pressed the button {{counter}} times.</p>
+ <p id="draw-shapes">Hello</p>
+</template>  -->
+<!-- 
+<template name="info">
+  <h2>Learn Meteor!</h2>
+  <ul>
+    <li><a href="https://www.meteor.com/try" target="_blank">Do the Tutorial</a></li>
+    <li><a href="http://guide.meteor.com" target="_blank">Follow the Guide</a></li>
+    <li><a href="https://docs.meteor.com" target="_blank">Read the Docs</a></li>
+    <li><a href="https://forums.meteor.com" target="_blank">Discussions</a></li>
+  </ul>
+</template> -->
+
+<template name="display">
+  <div class = "row">
+    <div class = "col-xs-8" id = "layout" style="height: 650px">
+    </div>
+    <div class = "col-xs-4">
+      <table class="table darkTable">
+        <thead>
+          <tr>
+            <th scope = "col" align="text-center" colspan="2">
+              ROOM DATA
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr> 
+            <th scope = "row"> Badge Count: </th>
+            <td> sdf {{badge_count}} </td>
+          </tr>
+          <tr> 
+            <th scope = "row"> No. of Beacons: </th>
+            <td> asdfas {{beacon_count}} </td>
+          </tr>
+        </tbody>
+      </table>
+
+
+
+      <button type="button" class="add_badge btn btn-lg btn-primary">Add Badge</button>
+
+
+      
+      <table class="table darkTable" align="text-center">
+        <thead>
+          <tr>
+            <th scope = "col" align="text-center" colspan="3">
+              Badge Data
+            </th>
+          </tr>
+          <tr> 
+            <th scope = "col">
+              Name
+            </th>
+            <th>
+              X
+            </th>
+            <th>
+              Y 
+            </th>
+          </tr>
+        </thead>
+        <tbody class="table_body">
+          <tr class = "badge_row"> 
+            <th scope = "row"> Name 1 </th>
+            <td> {{x1_position}} </td>
+            <td> {{y1_position}} </td>
+          </tr>
+          <tr class = "badge_row"> 
+            <th scope = "row" class="name_row"> Name 2 </th>
+            <td> {{x2_position}} </td>
+            <td> {{y2_position}} </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</template>
