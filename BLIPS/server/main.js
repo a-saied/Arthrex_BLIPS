@@ -1,10 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 
-import {distanceData, positionData, app} from './../imports/dataCollection.js';
+import Networking from './../imports/networking';
+
+import {distanceData, rawData, app} from './../imports/dataCollection.js';
 
 Meteor.startup(() => {
   // code to run on server at startup
-  positionData.remove({});
+  rawData.remove({});
   distanceData.remove({});
   app.remove({});
 });

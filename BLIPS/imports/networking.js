@@ -2,15 +2,19 @@
 import net from 'net';
 
 import { distanceData } from './dataCollection.js';
+import KalmanFilter from './kalman.js';
 //port # we are using
 const PORT = 4321;
 // const PORT1 = 41235;
-
+/// run all data through this here kalman filter. 
+// the filter should normalize the data 
 class Networking {
 	constructor(port) {
 		this.port = port;
 		// this.port1 = port1
-
+		var kf = new KalmanFilter();
+		// run all data through this here kalman filter. 
+		// the filter should normalize the data 
 
 		const server = net.createServer(Meteor.bindEnvironment(function(socket) {
 			console.log('Server connected on: ' + socket.localAddress + " from " + socket.remoteAddress);
@@ -21,7 +25,8 @@ class Networking {
 			// phone_socket = socket1;
 
 			board_socket.write("CONNECTED TO WEB APP");
-			Connections.update({_id: 'connected'}, {state: "true"});
+			console.log("Sent message to badge");
+			//distanceData.update({_id: 'connected'}, {state: "true"});
 
 			board_socket.on('data', Meteor.bindEnvironment(logData)); // when u get data, use receive_func, when u get error use socket error
 
@@ -45,7 +50,7 @@ class Networking {
 		  	board_socket.on('timeout', function(e) {
 		  		console.log("Socket timeout");
 		  	});
-
+ 
 	  	
 
 		})).on('error', (err) => {
@@ -69,11 +74,11 @@ class Networking {
 
 // function to run when we receive a data signal from the socket
 var logData = function(data) {
-	console.log('---- Socket Received Data ----');
+	console.log('---- Web App Received Data ----');
 	var dataString = data.toString();
 	console.log(dataString);
 	//split data with \n and parse each of them
-	DistanceData.insert({minor: "sample_minor", dist: "12", })
+	distanceData.insert({minor: "sample_minor", dist: "12", })
 }
 
 

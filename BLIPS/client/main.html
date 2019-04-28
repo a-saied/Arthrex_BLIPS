@@ -54,52 +54,58 @@
         <tbody>
           <tr> 
             <th scope = "row"> Badge Count: </th>
-            <td> sdf {{badge_count}} </td>
+            <td> {{badge_count}} </td>
           </tr>
           <tr> 
             <th scope = "row"> No. of Beacons: </th>
-            <td> asdfas {{beacon_count}} </td>
+            <td> {{beacon_count}} </td>
           </tr>
         </tbody>
       </table>
 
 
 
-      <button type="button" class="add_badge btn btn-lg btn-primary">Add Badge</button>
+      <button type="button" class="add_badge btn btn-lg btn-secondary">Add Badge</button>
 
 
       
       <table class="table darkTable" align="text-center">
-        <thead>
+        <thead class="table_body">
           <tr>
             <th scope = "col" align="text-center" colspan="3">
               Badge Data
             </th>
           </tr>
-          <tr> 
-            <th scope = "col">
+          <tr class="badge_row"> 
+            <th>
               Name
             </th>
-            <th>
+            <td>
               X
-            </th>
-            <th>
+            </td>
+            <td>
               Y 
-            </th>
+            </td>
           </tr>
+          {{table_data}}
         </thead>
-        <tbody class="table_body">
-          <tr class = "badge_row"> 
+        <!-- <tbody>
+          <tr>
+          {{table_data}}
+          </tr>
+        </tbody> -->
+        <!-- <tbody>
+          <tr style="display: none" class = "badge_row"> 
             <th scope = "row"> Name 1 </th>
             <td> {{x1_position}} </td>
             <td> {{y1_position}} </td>
           </tr>
           <tr class = "badge_row"> 
-            <th scope = "row" class="name_row"> Name 2 </th>
+            <th style="display: none" scope = "row" class="name_row"> Name 2 </th>
             <td> {{x2_position}} </td>
             <td> {{y2_position}} </td>
-          </tr>
-        </tbody>
+          </tr> 
+        </tbody> -->
       </table>
     </div>
 
