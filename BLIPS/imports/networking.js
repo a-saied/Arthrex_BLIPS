@@ -76,8 +76,37 @@ class Networking {
 var logData = function(data) {
 	console.log('---- Web App Received Data ----');
 	var dataString = data.toString();
-	console.log(dataString);
+	// console.log(dataString);
+	var raw = dataString.split(':');
+
+	console.log("Badge no. = " + raw[0]);
+	if(raw.length > 1) { //if data has gotten through correctly (should always check)
+		var all_beacons = raw[1];
+		var beacon_array = all_beacons.split("/"); // get individual strings for individual beacons
+		// console.log(beacon_array);
+		for(var i = 0; i < beacon_array.length-1; i++){
+			var beacon_raw = beacon_array[i].split("=");
+			console.log("Beacon ID: " + beacon_raw[0]);
+			//deal with data here
+			if(beacon_raw.length > 0){
+				// if data is available
+				// console.log(beacon_raw[1]);
+				var all_data = beacon_raw[1];
+				var data_pairs = all_data.split(".") // now we just have individual pairs 
+				for(var j = 0; j < data_pairs.length - 1; j++){
+					// console.log(data_pairs[j]);
+					var single_pair = data_pairs[j].split(",");
+					console.log("Raw: " + single_pair[0] + "   Diff: " + single_pair[1]);
+				}
+			}
+		}
+	}
+	/// minor is identified before a colon 
 	//split data with \n and parse each of them
+	//filter
+	//store filtered in db 
+	//convert to distance 
+	//
 	distanceData.insert({minor: "sample_minor", dist: "12", })
 }
 
