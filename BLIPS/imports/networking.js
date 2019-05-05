@@ -1,20 +1,28 @@
 //needed for tcp connection
 import net from 'net';
 
-import { distanceData } from './dataCollection.js';
+import { distanceData, rawData } from './dataCollection.js';
 import KalmanFilter from './kalman.js';
 //port # we are using
 const PORT = 4321;
 // const PORT1 = 41235;
 /// run all data through this here kalman filter. 
 // the filter should normalize the data 
+var filters = [];
+for(var i = 0; i < 4; i++){
+	filters.push(new KalmanFilter());
+}
 class Networking {
+
 	constructor(port) {
 		this.port = port;
-		// this.port1 = port1
-		var kf = new KalmanFilter();
+		//  this.port1 = port1
 		// run all data through this here kalman filter. 
 		// the filter should normalize the data 
+		// var filters = [];
+		// for(var i = 0; i < 4; i++){
+		// 	filters.push(new KalmanFilter());
+		// }
 
 		const server = net.createServer(Meteor.bindEnvironment(function(socket) {
 			console.log('Server connected on: ' + socket.localAddress + " from " + socket.remoteAddress);
@@ -24,7 +32,7 @@ class Networking {
 			board_socket = socket;
 			// phone_socket = socket1;
 
-			board_socket.write("CONNECTED TO WEB APP");
+			// board_socket.write("CONNECTED TO WEB APP");
 			console.log("Sent message to badge");
 			//distanceData.update({_id: 'connected'}, {state: "true"});
 
@@ -76,7 +84,8 @@ class Networking {
 var logData = function(data) {
 	console.log('---- Web App Received Data ----');
 	var dataString = data.toString();
-	// console.log(dataString);
+	console.log(dataString);
+	console.log("-------------------------------"); 
 	var raw = dataString.split(':');
 
 	console.log("Badge no. = " + raw[0]);
@@ -97,17 +106,26 @@ var logData = function(data) {
 					// console.log(data_pairs[j]);
 					var single_pair = data_pairs[j].split(",");
 					console.log("Raw: " + single_pair[0] + "   Diff: " + single_pair[1]);
+					var final_raw = {badge_id: raw[0], beacon: beacon_raw[0], rssi: single_pair[0], diff: single_pair[1], createdAt: new Date()}
+					rawData.insert(final_raw);
+					//conversion goes here
+					//run through Kalman Filter based on beacon number 
+					var new_diff = filters[(parseInt(final_raw.beacon) - 1)].filter(final_raw.diff);
+					var exp = new_diff/20;
+					var distance_final = Math.pow(10, exp);
+					console.log(distance_final);
+
+					distanceData.insert({badge_id: final_raw.badge_id, beacon: final_raw.beacon, dist: distance_final, createdAt: final_raw.createdAt});
 				}
 			}
 		}
 	}
 	/// minor is identified before a colon 
-	//split data with \n and parse each of them
 	//filter
 	//store filtered in db 
 	//convert to distance 
 	//
-	distanceData.insert({minor: "sample_minor", dist: "12", })
+	// distanceData.insert({minor: "sample_minor", dist: "12" })
 }
 
 
