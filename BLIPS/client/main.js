@@ -120,11 +120,17 @@ Template.display.onRendered(function(){
 	function updateData(){
 		badges.find().forEach(function(doc){
 			// console.log(distanceData.findOne({}, {sort: {createdAt:-1}}));
-			first_radius = distanceData.findOne({badge_num: doc.badge_num, beacon: 1}, {sort: {createdAt:-1}});
+			console.log();
+			var options = { sort: {createdAt: -1}};
+			var one_r = distanceData.findOne({$and: [{beacon: "1"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
+			if(one_r != null) first_radius = one_r.dist; //* some multiplier
 			console.log(first_radius);
-			second_radius = distanceData.findOne({badge_num: doc.badge_num, beacon: 2}, {sort: {createdAt:-1}});
-			third_radius = distanceData.findOne({badge_num: doc.badge_num, beacon: 3}, {sort: {createdAt:-1}});
-			fourth_radius = distanceData.findOne({badge_num: doc.badge_num, beacon: 4}, {sort: {createdAt:-1}});
+			var two_r = distanceData.findOne({$and: [{beacon: "2"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
+			if(two_r != null) second_radius = one_r.dist;
+			var three_r = distanceData.findOne({$and: [{beacon: "3"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
+			if(three_r != null) third_radius = one_r.dist;
+			var four_r = distanceData.findOne({$and: [{beacon: "4"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
+			if(four_r != null) fourth_radius = one_r.dist;
 			first.attr({r: first_radius});
 			second.attr({r: second_radius});
 			third.attr({r: third_radius});
