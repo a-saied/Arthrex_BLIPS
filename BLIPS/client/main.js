@@ -7,8 +7,8 @@ import s from 'svg-intersections';
 import { badges, distanceData } from './../imports/dataCollection.js';
 import KalmanFilter from './../imports/kalman.js';
 
-var update_interval = 10000; //test value 
-
+var update_interval = 5000; //test value 
+var possible_colors = ['#A93226', '#884EA0', '#2471A3', '#17A589', '#229954', '#D4AC0D', '#CA6F1E', '#839192', '#2E4053', 'CB4335']
 Template.display.helpers({
 	badge_count(){
 		return badges.find().count();
@@ -30,9 +30,22 @@ Template.display.helpers({
 		badges.find().forEach(function(doc){
 			var store = document.getElementsByClassName('badge_row');
 		  var final = store[store.length - 1].cloneNode(true);
-		  final.getElementsByTagName('th')[0].innerHTML = doc._id;
-		  final.getElementsByTagName('td')[0] = "b";
-		  final.getElementsByTagName('td')[1] = "a";
+		  final.getElementsByTagName('th')[0].innerHTML = doc.badge_id;
+		  final.getElementsByTagName('th')[1].innerHTML = doc.badge_num;
+		  final.getElementsByTagName('th')[0].style.backgroundColor = doc.color;
+		  // final.getElementsByTagName('th')[2].innerHTML = "";
+		  if(doc.pos_x == null){
+			  final.getElementsByTagName('td')[0].innerHTML = "a";
+			}else{
+				final.getElementsByTagName('td')[0].innerHTML = doc.pos_x;
+			}
+
+
+		  if(doc.pos_y == null){
+			  final.getElementsByTagName('td')[1].innerHTML = "b";
+			}else{
+				final.getElementsByTagName('td')[1].innerHTML = doc.pos_y;
+			}
 	 		var t_body = document.getElementsByClassName('table_body');
 	  	t_body[0].appendChild(final);
 		});
@@ -106,16 +119,18 @@ Template.display.onRendered(function(){
   var shape = svgIntersections.shape;
 	function updateData(){
 		badges.find().forEach(function(doc){
-			first_radius = distanceData.findOne({badge: doc._id, minor: 1}, {sort: {createdAt:-1}});
-			second_radius = distanceData.findOne({badge: doc._id, minor: 2}, {sort: {createdAt:-1}});
-			third_radius = distanceData.findOne({badge: doc._id, minor: 3}, {sort: {createdAt:-1}});
-			fourth_radius = distanceData.findOne({badge: doc._id, minor: 4}, {sort: {createdAt:-1}});
+			// console.log(distanceData.findOne({}, {sort: {createdAt:-1}}));
+			first_radius = distanceData.findOne({badge_num: doc.badge_num, beacon: 1}, {sort: {createdAt:-1}});
+			console.log(first_radius);
+			second_radius = distanceData.findOne({badge_num: doc.badge_num, beacon: 2}, {sort: {createdAt:-1}});
+			third_radius = distanceData.findOne({badge_num: doc.badge_num, beacon: 3}, {sort: {createdAt:-1}});
+			fourth_radius = distanceData.findOne({badge_num: doc.badge_num, beacon: 4}, {sort: {createdAt:-1}});
 			first.attr({r: first_radius});
 			second.attr({r: second_radius});
 			third.attr({r: third_radius});
 			fourth.attr({r: fourth_radius});
 			var beacon_count = 4;
-			var intersect_pts = []; 
+			var intersect_pts = [];  
 			for(var i = 0; i < beacon_count - 1; i++){
 				for(var j = i + 1; j < beacon_count; j++){
 					var int = intersect(shape("circle", beacon_store[i].attr()), shape("circle", beacon_store[j].attr()))
@@ -129,7 +144,7 @@ Template.display.onRendered(function(){
 			var badge_circle = null; 
 			var badge_shadow = null;
 			/// do something with the collected intersection points 
-			console.log(intersect_pts);
+			// console.log(intersect_pts);
 			var x_coord = 0; 
 			var y_coord = 0;
 			for(var i = 0; i <intersect_pts.length; i++){
@@ -138,7 +153,8 @@ Template.display.onRendered(function(){
 			}
 			x_coord = x_coord/intersect_pts.length;
 			y_coord = y_coord/intersect_pts.length;
-			badge_circle = draw.circle(10).cx(x_coord).cy(y_coord).fill('#000');
+			badges.update(doc._id, { $set: {pos_x: parseInt((x_coord-125),10), pos_y: parseInt((y_coord-100),10)}})
+			badge_circle = draw.circle(10).cx(x_coord).cy(y_coord).fill(doc.color);
 			//now create the larger circle 
 			var dist_store = []; 
 			var max_range = 10; 
@@ -161,7 +177,7 @@ Template.display.onRendered(function(){
 
 
 
-			badge_shadow = draw.circle(max_range*2).cx(x_coord).cy(y_coord).opacity('0.1').fill('#485167');
+			badge_shadow = draw.circle(max_range*2).cx(x_coord).cy(y_coord).opacity('0.1').fill(doc.color);
 		});
 	}
 	// var svgIntersections = require('svg-intersections');
@@ -206,7 +222,7 @@ Template.display.events({
 	    // var store = document.getElementsByClassName('badge_row');
   	  // var final = store[store.length - 1].cloneNode(true);
   	  // final.getElementsByTagName('th')[0].innerHTML = info;
-  	  badges.insert({_id: info});
+  	  badges.insert({badge_id: info, badge_num: (badges.find().count() + 1), color: possible_colors[badges.find().count()], pos_x: null, pos_y: null});
    		// var t_body = document.getElementsByClassName('table_body');
     	// t_body[0].appendChild(final);
     }else{

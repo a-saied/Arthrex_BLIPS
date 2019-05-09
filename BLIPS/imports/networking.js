@@ -1,7 +1,7 @@
 //needed for tcp connection
 import net from 'net';
 
-import { distanceData, rawData } from './dataCollection.js';
+import { distanceData, rawData, badges } from './dataCollection.js';
 import KalmanFilter from './kalman.js';
 //port # we are using
 const PORT = 4321;
@@ -10,7 +10,12 @@ const PORT = 4321;
 // the filter should normalize the data 
 var filters = [];
 for(var i = 0; i < 4; i++){
-	filters.push(new KalmanFilter());
+	var inner_array = []
+	for(var j = 0; j <badges.find().count(); j++){
+		inner_array.push(new KalmanFilter());
+	}
+	filters.push(inner_array);
+	
 }
 class Networking {
 
@@ -32,7 +37,7 @@ class Networking {
 			board_socket = socket;
 			// phone_socket = socket1;
 
-			// board_socket.write("CONNECTED TO WEB APP");
+			board_socket.write("CONNECTED TO WEB APP");
 			console.log("Sent message to badge");
 			//distanceData.update({_id: 'connected'}, {state: "true"});
 
@@ -110,12 +115,12 @@ var logData = function(data) {
 					rawData.insert(final_raw);
 					//conversion goes here
 					//run through Kalman Filter based on beacon number 
-					var new_diff = filters[(parseInt(final_raw.beacon) - 1)].filter(final_raw.diff);
+					var new_diff = filters[(parseInt(final_raw.beacon) - 1)][parseInt(final_raw.badge_id)-1].filter(final_raw.diff);
 					var exp = new_diff/20;
 					var distance_final = Math.pow(10, exp);
 					console.log(distance_final);
 
-					distanceData.insert({badge_id: final_raw.badge_id, beacon: final_raw.beacon, dist: distance_final, createdAt: final_raw.createdAt});
+					distanceData.insert({badge_num:  final_raw.badge_id, beacon: final_raw.beacon, dist: distance_final, createdAt: final_raw.createdAt});
 				}
 			}
 		}
