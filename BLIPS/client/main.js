@@ -123,7 +123,7 @@ Template.display.onRendered(function(){
 			// console.log(distanceData.findOne({}, {sort: {createdAt:-1}}));
 			// make sure not to recycle the use of radii from other badges
 			var one_r = distanceData.findOne({$and: [{beacon: "1"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
-			if(one_r != null && one_r.dist < 14) {
+			if(one_r != null && one_r.dist < 14.15) {
 				first_radius = one_r.dist * 60;
 			}else{
 				console.log(doc.radii);
@@ -132,21 +132,21 @@ Template.display.onRendered(function(){
 			new_radii.push(first_radius);
 			console.log(first_radius);
 			var two_r = distanceData.findOne({$and: [{beacon: "2"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
-			if(two_r != null && two_r.dist < 14){
+			if(two_r != null && two_r.dist < 14.15){
 				second_radius = two_r.dist * 60;
 			}else{
 				second_radius = doc.radii[1];
 			}
 			new_radii.push(second_radius);
 			var three_r = distanceData.findOne({$and: [{beacon: "3"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
-			if(three_r != null && three_r.dist < 10) {
+			if(three_r != null && three_r.dist < 14.15) {
 				third_radius = three_r.dist * 60;
 			}else{
 				third_radius = doc.radii[2];
 			}
 			new_radii.push(third_radius);
 			var four_r = distanceData.findOne({$and: [{beacon: "4"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
-			if(four_r != null && four_r.dist < 10) {
+			if(four_r != null && four_r.dist < 14.15) {
 				fourth_radius = four_r.dist * 60;
 			}else{
 				fourth_radius = doc.radii[3]

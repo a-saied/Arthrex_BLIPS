@@ -1,7 +1,7 @@
 //needed for tcp connection
 import net from 'net';
 
-import { distanceData, rawData, badges } from './dataCollection.js';
+import { distanceData, rawData, badges, wifis } from './dataCollection.js';
 import KalmanFilter from './kalman.js';
 //port # we are using
 const PORT = 4321;
@@ -94,7 +94,10 @@ var logData = function(data) {
 	var raw = dataString.split(':');
 
 	console.log("Badge no. = " + raw[0]);
-	if(raw.length > 1) { //if data has gotten through correctly (should always check)
+
+
+	//// BLUETOOTH DATA /////
+	if(raw[1] != '') { //if data has gotten through correctly (should always check)
 		var all_beacons = raw[1];
 		var beacon_array = all_beacons.split("/"); // get individual strings for individual beacons
 		// console.log(beacon_array);
@@ -122,6 +125,28 @@ var logData = function(data) {
 
 					distanceData.insert({badge_num:  final_raw.badge_id, beacon: final_raw.beacon, dist: distance_final, createdAt: final_raw.createdAt});
 				}
+			}
+		}
+	}
+
+
+	///// WIFI DATA //////
+	if(raw.length > 1 && raw[2] != ''){
+		var all_routers = raw[2].split("/");
+		for(var i = 0; i < all_routers.length - 1; i++){
+			var mac_array = all_routers[i].split("=");
+			console.log("MAC address: " + mac_array[0]);
+			if(mac_array.length > 1 && mac_array[1] != ''){
+				var raw_RSSI = mac_array[1].split(".");
+				var tot = 0; 
+				for(var j = 0; j < raw_RSSI.length - 1; j++){
+					console.log("RSSI " + j + ": " + raw_RSSI[j])
+					tot += raw_RSSI[j];
+					// WHAT THE FUCK DO I DO WITH THIS //
+					
+				}
+				tot = tot/(raw_RSSI.length-1);
+				wifis.insert({mac: mac_array[0], rssi: tot, createdAt: new Date()})
 			}
 		}
 	}
