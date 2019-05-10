@@ -119,18 +119,41 @@ Template.display.onRendered(function(){
   var shape = svgIntersections.shape;
 	function updateData(){
 		badges.find().forEach(function(doc){
+			var new_radii = []
 			// console.log(distanceData.findOne({}, {sort: {createdAt:-1}}));
-			console.log();
-			var options = { sort: {createdAt: -1}};
+			// make sure not to recycle the use of radii from other badges
 			var one_r = distanceData.findOne({$and: [{beacon: "1"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
-			if(one_r != null) first_radius = one_r.dist; //* some multiplier
+			if(one_r != null && one_r.dist < 14) {
+				first_radius = one_r.dist * 60;
+			}else{
+				console.log(doc.radii);
+				first_radius = doc.radii[0];
+			}
+			new_radii.push(first_radius);
 			console.log(first_radius);
 			var two_r = distanceData.findOne({$and: [{beacon: "2"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
-			if(two_r != null) second_radius = one_r.dist;
+			if(two_r != null && two_r.dist < 14){
+				second_radius = two_r.dist * 60;
+			}else{
+				second_radius = doc.radii[1];
+			}
+			new_radii.push(second_radius);
 			var three_r = distanceData.findOne({$and: [{beacon: "3"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
-			if(three_r != null) third_radius = one_r.dist;
+			if(three_r != null && three_r.dist < 10) {
+				third_radius = three_r.dist * 60;
+			}else{
+				third_radius = doc.radii[2];
+			}
+			new_radii.push(third_radius);
 			var four_r = distanceData.findOne({$and: [{beacon: "4"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
-			if(four_r != null) fourth_radius = one_r.dist;
+			if(four_r != null && four_r.dist < 10) {
+				fourth_radius = four_r.dist * 60;
+			}else{
+				fourth_radius = doc.radii[3]
+			}
+			new_radii.push(fourth_radius);
+			badges.update(doc._id, {$set: {radii: new Array(first_radius, second_radius, third_radius, fourth_radius)}});
+
 			first.attr({r: first_radius});
 			second.attr({r: second_radius});
 			third.attr({r: third_radius});
@@ -228,7 +251,7 @@ Template.display.events({
 	    // var store = document.getElementsByClassName('badge_row');
   	  // var final = store[store.length - 1].cloneNode(true);
   	  // final.getElementsByTagName('th')[0].innerHTML = info;
-  	  badges.insert({badge_id: info, badge_num: (badges.find().count() + 1), color: possible_colors[badges.find().count()], pos_x: null, pos_y: null});
+  	  badges.insert({badge_id: info, badge_num: (badges.find().count() + 1), color: possible_colors[badges.find().count()], pos_x: null, pos_y: null, radii: new Array(400, 440, 460, 460)});
    		// var t_body = document.getElementsByClassName('table_body');
     	// t_body[0].appendChild(final);
     }else{
