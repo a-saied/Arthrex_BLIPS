@@ -144,20 +144,20 @@ var logData = function(data) {
 				for(var j = 0; j < raw_RSSI.length - 1; j++){
 					console.log("RSSI " + j + ": " + raw_RSSI[j])
 					tot += raw_RSSI[j];
-					// WHAT THE FUCK DO I DO WITH THIS //
+
 					
 				}
-				tot = tot/(raw_RSSI.length-1);
-				wifis.insert({mac: mac_array[0], rssi: tot, createdAt: new Date()})
+				tot = tot/(raw_RSSI.length-1); //average of all RSSI values
+				var wifi_diff = -43  - tot; // get difference 
+				var wifi_exp = wifi_diff/20;
+				var wifi_dist = Math.pow(10, exp);
+				var wifi_no_height = Math.pow(wifi_dist, 2) - 4;
+				var wifi_fin = Math.sqrt(no_height);
+				distanceData.insert({badge_num: raw[0], beacon: mac_array[0], dist: wifi_dist, createdAt: new Date()});
 			}
 		}
 	}
-	/// minor is identified before a colon 
-	//filter
-	//store filtered in db 
-	//convert to distance 
-	//
-	// distanceData.insert({minor: "sample_minor", dist: "12" })
+	
 }
 
 
