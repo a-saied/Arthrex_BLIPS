@@ -15,7 +15,6 @@ for(var i = 0; i < 4; i++){
 		inner_array.push(new KalmanFilter());
 	}
 	filters.push(inner_array);
-	
 }
 class Networking {
 
@@ -118,11 +117,14 @@ var logData = function(data) {
 					rawData.insert(final_raw);
 					//conversion goes here
 					//run through Kalman Filter based on beacon number 
+					// console.log(filters[(parseInt(final_raw.beacon) - 1)][(parseInt(final_raw.badge_id)-1)]);
 					var new_diff = filters[(parseInt(final_raw.beacon) - 1)][parseInt(final_raw.badge_id)-1].filter(final_raw.diff);
-					var exp = new_diff/20;
+					var exp = final_raw.diff/20;
 					var distance_final = Math.pow(10, exp);
+					var no_height = Math.pow(distance_final, 2) - 4;
+					no_height = Math.sqrt(no_height);
 					console.log(distance_final);
-
+					// console.log("Badge #" + final_raw.badge_id + ", Beacon #" + final_raw.beacon);
 					distanceData.insert({badge_num:  final_raw.badge_id, beacon: final_raw.beacon, dist: distance_final, createdAt: final_raw.createdAt});
 				}
 			}

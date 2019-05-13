@@ -78,10 +78,10 @@ Template.display.onRendered(function(){
 	var second_radius = 440;
 	var third_radius = 460; 
 	var fourth_radius = 460;
-	var first = draw.circle(first_radius*2).cx(125).cy(100).opacity('0.5').fill('#485167');
-	var second = draw.circle(second_radius*2).cx(725).cy(100).opacity('0.5').fill('#485167');
-	var third = draw.circle(third_radius*2).cx(725).cy(700).opacity('0.5').fill('#485167');
-	var fourth = draw.circle(fourth_radius*2).cx(125).cy(700).opacity('0.5').fill('#485167');
+	var first = draw.circle(first_radius*2).cx(125).cy(100).opacity('0').fill('#485167');
+	var second = draw.circle(second_radius*2).cx(725).cy(100).opacity('0').fill('#485167');
+	var third = draw.circle(third_radius*2).cx(725).cy(700).opacity('0').fill('#485167');
+	var fourth = draw.circle(fourth_radius*2).cx(125).cy(700).opacity('0').fill('#485167');
 	//find intersection of three circles (bare minimum)
 	// var inter = first.clipWith(second);
 	// var final = fourth.clipWith(inter);
@@ -138,22 +138,22 @@ Template.display.onRendered(function(){
 				second_radius = doc.radii[1];
 			}
 			new_radii.push(second_radius);
-			var three_r = distanceData.findOne({$and: [{beacon: "3"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
+			var three_r = distanceData.findOne({$and: [{beacon: "4"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
 			if(three_r != null && three_r.dist < 10) {
 				third_radius = three_r.dist * 85;
 			}else{
 				third_radius = doc.radii[2]; 
 			}
 			new_radii.push(third_radius);
-			var four_r = distanceData.findOne({$and: [{beacon: "4"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
-			if(four_r != null && four_r.dist < ) {
+			var four_r = distanceData.findOne({$and: [{beacon: "3"},  {badge_num: doc.badge_num.toString()}]}, {sort: {createdAt: -1}}); // * some multiplier to convert to a pixel value;
+			if(four_r != null && four_r.dist < 10) {
 				fourth_radius = four_r.dist * 85;
 			}else{
 				fourth_radius = doc.radii[3]
-			}
+			} 
 			new_radii.push(fourth_radius);
 			badges.update(doc._id, {$set: {radii: new Array(first_radius, second_radius, third_radius, fourth_radius)}});
-
+			console.log(new_radii);
 			first.attr({r: first_radius});
 			second.attr({r: second_radius});
 			third.attr({r: third_radius});
